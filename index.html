@@ -3,977 +3,1139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎮 Plataformas 3D - Mejorado</title>
+    <title>🎮 Plataformas 3D</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --c1: #1a1a2e;
+            --c2: #16213e;
+            --c3: #0f3460;
+            --accent: #e94560;
+            --gold: #fbbf24;
+            --green: #22c55e;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Nunito', sans-serif;
             overflow: hidden;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--c1);
         }
 
-        #gameCanvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-        }
+        #gameCanvas { display: block; width: 100vw; height: 100vh; }
 
-        #ui {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 15px;
-        }
-
-        #powerups {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 18px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            border-radius: 15px;
-            min-width: 200px;
-        }
-
-        .powerup-active {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        .powerup-timer {
-            margin-left: auto;
-            font-size: 14px;
-            color: #fbbf24;
-        }
-
-        #controls {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: white;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 30px;
-            border-radius: 15px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        #gameOver {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 50px;
-            border-radius: 25px;
-            color: white;
-            text-align: center;
-            display: none;
-            z-index: 200;
-            border: 4px solid #fbbf24;
-        }
-
-        #gameOver h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
-            color: #fbbf24;
-        }
-
-        #gameOver button {
-            margin: 10px;
-            padding: 15px 40px;
-            font-size: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        #gameOver button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(102, 126, 234, 0.8);
-        }
-
-        .stat {
-            margin: 10px 0;
-        }
-
+        /* ── PANTALLA INICIO ── */
         #startScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
             z-index: 300;
         }
-
-        #startScreen h1 {
-            font-size: 72px;
-            color: white;
-            margin-bottom: 30px;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+        #startScreen::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(233,69,96,0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 50%, rgba(59,130,246,0.15) 0%, transparent 60%);
+            pointer-events: none;
         }
-
-        #startScreen button {
-            padding: 20px 50px;
-            font-size: 28px;
-            background: white;
-            color: #667eea;
+        .start-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 80px;
+            color: white;
+            text-shadow: 0 0 40px rgba(233,69,96,0.6), 4px 4px 0 rgba(0,0,0,0.3);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        .start-sub {
+            color: rgba(255,255,255,0.5);
+            font-size: 16px;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+        }
+        .start-btn {
+            padding: 18px 60px;
+            font-size: 22px;
+            font-family: 'Fredoka One', cursive;
+            letter-spacing: 3px;
+            background: var(--accent);
+            color: white;
             border: none;
-            border-radius: 15px;
+            border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.25s;
+            box-shadow: 0 8px 30px rgba(233,69,96,0.5);
+            position: relative; z-index: 1;
         }
-
-        #startScreen button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        .start-btn:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 16px 40px rgba(233,69,96,0.7);
         }
-
-        #startScreen p {
-            color: white;
-            font-size: 18px;
-            margin-top: 30px;
-            text-align: center;
-            max-width: 600px;
-        }
-
-        .powerup-info {
+        .start-info {
+            margin-top: 40px;
+            color: rgba(255,255,255,0.45);
             font-size: 14px;
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
+            text-align: center;
+            line-height: 2;
+            position: relative; z-index: 1;
         }
+        .start-info strong { color: rgba(255,255,255,0.75); }
+        .star-bg {
+            position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite alternate;
+        }
+        @keyframes twinkle {
+            from { opacity: 0.2; transform: scale(1); }
+            to   { opacity: 1;   transform: scale(1.5); }
+        }
+
+        /* ── SELECTOR DE NIVEL ── */
+        #levelSelect {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            padding: 20px;
+        }
+        #levelSelect::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.2), transparent 60%);
+            pointer-events: none;
+        }
+        .ls-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 42px;
+            color: white;
+            margin-bottom: 6px;
+            position: relative; z-index: 1;
+        }
+        .ls-sub {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            position: relative; z-index: 1;
+        }
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
+            max-width: 700px;
+            width: 100%;
+            position: relative; z-index: 1;
+        }
+        .level-card {
+            aspect-ratio: 1;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .level-card.unlocked {
+            background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(139,92,246,0.25));
+            border-color: rgba(59,130,246,0.5);
+        }
+        .level-card.unlocked:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: var(--blue);
+            box-shadow: 0 10px 30px rgba(59,130,246,0.4);
+        }
+        .level-card.completed {
+            background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(16,185,129,0.25));
+            border-color: rgba(34,197,94,0.6);
+        }
+        .level-card.completed:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(34,197,94,0.4);
+        }
+        .level-card.locked {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.08);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .level-card .lc-num {
+            font-family: 'Fredoka One', cursive;
+            font-size: 28px;
+            color: white;
+            line-height: 1;
+        }
+        .level-card .lc-icon {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        .level-card .lc-stars {
+            font-size: 10px;
+            color: var(--gold);
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .level-card.locked .lc-num { opacity: 0.3; }
+        .ls-back {
+            margin-top: 30px;
+            color: rgba(255,255,255,0.4);
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative; z-index: 1;
+            border: none; background: none;
+            font-family: 'Nunito', sans-serif;
+        }
+        .ls-back:hover { color: white; }
+
+        /* ── HUD EN JUEGO ── */
+        #ui {
+            position: fixed; top: 16px; left: 16px;
+            color: white; z-index: 100;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        #ui .stat { display: flex; align-items: center; gap: 8px; }
+        #ui .val { font-weight: 800; color: var(--gold); font-size: 17px; }
+
+        #powerupsHud {
+            position: fixed; top: 16px; right: 16px;
+            color: white; z-index: 100;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 180px;
+            font-size: 14px;
+        }
+        #powerupsHud .pu-title {
+            font-weight: 800; font-size: 13px;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 8px;
+        }
+        .powerup-active {
+            display: flex; align-items: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: 8px; padding: 6px 10px;
+            margin: 4px 0; gap: 8px;
+        }
+        .powerup-timer { margin-left: auto; color: var(--gold); font-weight: 700; }
+
+        #controls {
+            position: fixed; bottom: 16px; left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        #controls strong { color: rgba(255,255,255,0.9); }
+
+        /* ── LEVEL CLEAR ── */
+        #levelClear {
+            position: fixed; inset: 0;
+            display: none; align-items: center; justify-content: center;
+            z-index: 200;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+        }
+        .lc-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(34,197,94,0.5);
+            border-radius: 24px;
+            padding: 50px 60px;
+            text-align: center;
+            color: white;
+        }
+        .lc-box h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 52px;
+            color: var(--green);
+            text-shadow: 0 0 30px rgba(34,197,94,0.5);
+            margin-bottom: 6px;
+        }
+        .lc-box p { color: rgba(255,255,255,0.5); font-size: 15px; margin-bottom: 24px; }
+        .lc-stats { margin: 20px 0; }
+        .lc-stat { font-size: 17px; margin: 6px 0; }
+        .lc-stat span { color: var(--gold); font-weight: 800; }
+
+        /* ── GAME OVER / VICTORY ── */
+        #gameOver {
+            position: fixed; inset: 0;
+            display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 200;
+        }
+        .go-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(233,69,96,0.4);
+            border-radius: 24px;
+            padding: 50px 60px;
+            text-align: center;
+            color: white;
+            min-width: 380px;
+        }
+        .go-box.victory { border-color: rgba(251,191,36,0.5); }
+        .go-box h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 56px;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+        .go-box.victory h1 { color: var(--gold); }
+        .go-stat { font-size: 17px; margin: 8px 0; color: rgba(255,255,255,0.7); }
+        .go-stat span { color: var(--gold); font-weight: 800; }
+        .go-btns { margin-top: 28px; display: flex; gap: 12px; justify-content: center; }
+        .go-btn {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .go-btn.primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+        }
+        .go-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(233,69,96,0.6); }
+        .go-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .go-btn.secondary:hover { background: rgba(255,255,255,0.18); color: white; }
+        .next-btn {
+            padding: 14px 32px; font-size: 16px;
+            font-family: 'Nunito', sans-serif; font-weight: 700;
+            background: var(--green); color: white;
+            border: none; border-radius: 50px;
+            cursor: pointer; transition: all 0.2s;
+            box-shadow: 0 4px 20px rgba(34,197,94,0.4);
+            margin: 6px;
+        }
+        .next-btn:hover { transform: translateY(-2px); }
+        .menu-btn {
+            padding: 14px 32px; font-size: 16px;
+            font-family: 'Nunito', sans-serif; font-weight: 700;
+            background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 50px;
+            cursor: pointer; transition: all 0.2s; margin: 6px;
+        }
+        .menu-btn:hover { background: rgba(255,255,255,0.18); color: white; }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
 
-    <div id="startScreen">
-        <h1>🎮 Plataformas 3D</h1>
-        <button onclick="startGame()">JUGAR</button>
-        <p>
-            <strong>WASD</strong> - Mover | <strong>ESPACIO</strong> - Saltar<br>
-            Recoge las monedas y llega a la meta sin caerte
-        </p>
-        <div class="powerup-info">
-            <strong>Power-ups:</strong><br>
-            ⚡ Velocidad | 🦘 Super Salto | 🛡️ Escudo | ⭐ Invencibilidad
+<canvas id="gameCanvas"></canvas>
+
+<!-- PANTALLA INICIO -->
+<div id="startScreen">
+    <div class="star-bg" id="starBg"></div>
+    <div class="start-title">🎮 Plataformas 3D</div>
+    <div class="start-sub">Adventure Edition</div>
+    <button class="start-btn" onclick="showLevelSelect()">JUGAR</button>
+    <div class="start-info">
+        <strong>WASD</strong> — Mover &nbsp;|&nbsp; <strong>ESPACIO</strong> — Saltar &nbsp;|&nbsp; <strong>RATÓN</strong> — Cámara<br>
+        Recoge las monedas 🪙 y llega a la meta 🟢 sin caerte<br>
+        <span style="font-size:13px; margin-top:6px; display:block;">
+            ⚡ Velocidad &nbsp; 🦘 Super Salto &nbsp; 🛡️ Escudo &nbsp; ⭐ Invencibilidad
+        </span>
+    </div>
+</div>
+
+<!-- SELECTOR DE NIVEL -->
+<div id="levelSelect">
+    <div class="ls-title">Selecciona Nivel</div>
+    <div class="ls-sub">Completa cada nivel para desbloquear el siguiente</div>
+    <div class="levels-grid" id="levelsGrid"></div>
+    <button class="ls-back" onclick="showStart()">← Volver al inicio</button>
+</div>
+
+<!-- HUD -->
+<div id="ui">
+    <div class="stat">🪙 Monedas &nbsp;<span class="val" id="coins">0</span></div>
+    <div class="stat">❤️ Vidas &nbsp;<span class="val" id="lives">3</span></div>
+    <div class="stat">📍 Nivel &nbsp;<span class="val" id="levelDisp">1</span><span style="color:rgba(255,255,255,0.3)"> / 12</span></div>
+    <div class="stat">⏱️ <span class="val" id="time">0</span>s</div>
+</div>
+
+<div id="powerupsHud">
+    <div class="pu-title">⚡ Power-ups</div>
+    <div id="activePowerups"></div>
+</div>
+
+<div id="controls">
+    <strong>WASD</strong> Mover &nbsp;|&nbsp; <strong>ESPACIO</strong> Saltar &nbsp;|&nbsp; <strong>RATÓN</strong> Cámara
+</div>
+
+<!-- LEVEL CLEAR -->
+<div id="levelClear" style="display:none;">
+    <div class="lc-box">
+        <h2>✓ ¡Nivel Superado!</h2>
+        <p id="lcSubtitle">¡Buen trabajo!</p>
+        <div class="lc-stats">
+            <div class="lc-stat">🪙 Monedas recogidas: <span id="lcCoins">0</span></div>
+            <div class="lc-stat">⏱️ Tiempo: <span id="lcTime">0</span>s</div>
+        </div>
+        <div>
+            <button class="next-btn" id="nextLevelBtn" onclick="proceedNextLevel()">Siguiente Nivel ➜</button>
+            <button class="menu-btn" onclick="backToMenu()">Menú</button>
         </div>
     </div>
+</div>
 
-    <div id="ui">
-        <div class="stat">🪙 Monedas: <span id="coins">0</span></div>
-        <div class="stat">❤️ Vidas: <span id="lives">3</span></div>
-        <div class="stat">📍 Nivel: <span id="level">1</span>/7</div>
-        <div class="stat">⏱️ Tiempo: <span id="time">0</span>s</div>
-    </div>
-
-    <div id="powerups">
-        <div style="margin-bottom: 10px; font-size: 20px;">⚡ Power-ups</div>
-        <div id="activePowerups"></div>
-    </div>
-
-    <div id="controls">
-        <strong>WASD</strong> = Mover | <strong>ESPACIO</strong> = Saltar | <strong>MOUSE</strong> = Mirar
-    </div>
-
-    <div id="gameOver">
+<!-- GAME OVER -->
+<div id="gameOver">
+    <div class="go-box" id="goBox">
         <h1 id="gameOverTitle">¡Game Over!</h1>
-        <p id="gameOverText"></p>
-        <div style="margin: 20px 0;">
-            <div class="stat">🪙 Monedas: <span id="finalCoins">0</span></div>
-            <div class="stat">⏱️ Tiempo: <span id="finalTime">0</span>s</div>
+        <p id="gameOverText" style="color:rgba(255,255,255,0.5); margin-bottom:16px;"></p>
+        <div>
+            <div class="go-stat">🪙 Monedas: <span id="finalCoins">0</span></div>
+            <div class="go-stat">⏱️ Tiempo: <span id="finalTime">0</span>s</div>
         </div>
-        <button onclick="restartGame()">🔄 Reintentar</button>
-        <button onclick="location.reload()">🏠 Menú</button>
+        <div class="go-btns">
+            <button class="go-btn primary" onclick="restartLevel()">🔄 Reintentar</button>
+            <button class="go-btn secondary" onclick="backToMenu()">🏠 Menú</button>
+        </div>
     </div>
+</div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script>
-        // Configuración
-        let scene, camera, renderer;
-        let player, playerVelocity = new THREE.Vector3();
-        let platforms = [];
-        let coins = [];
-        let enemies = [];
-        let powerups = [];
-        let keys = {};
-        let gameActive = false;
-        let isJumping = false;
-        let canJump = false;
-        
-        // Stats
-        let coinsCollected = 0;
-        let lives = 3;
-        let currentLevel = 1;
-        let startTime = 0;
-        let elapsedTime = 0;
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ──────────────────────────────────────────────────────────────────
+//  CONFIG & STATE
+// ──────────────────────────────────────────────────────────────────
+let scene, camera, renderer;
+let player, playerVelocity = new THREE.Vector3();
+let platforms = [], coins = [], enemies = [], powerupObjects = [];
+let keys = {};
+let gameActive = false;
+let isJumping = false;
+let canJump = false;
+let mouseX = 0;
 
-        // Power-ups activos
-        let activePowerups = {
-            speed: { active: false, endTime: 0 },
-            jump: { active: false, endTime: 0 },
-            shield: { active: false, endTime: 0 },
-            invincible: { active: false, endTime: 0 }
+let coinsCollected = 0;
+let lives = 3;
+let currentLevel = 1;
+let startTime = 0;
+let elapsedTime = 0;
+let levelCoins = 0;   // coins in current level
+let levelStartTime = 0;
+
+// Progress saved in localStorage
+let unlockedLevel = parseInt(localStorage.getItem('unlocked') || '1');
+let completedLevels = JSON.parse(localStorage.getItem('completed') || '[]');
+
+// Power-ups
+let activePowerups = {
+    speed:      { active: false, endTime: 0 },
+    jump:       { active: false, endTime: 0 },
+    shield:     { active: false, endTime: 0 },
+    invincible: { active: false, endTime: 0 }
+};
+
+// ── PHYSICS (mucho más lento y controlable) ──
+const gravity       = -0.016;
+const baseJumpForce = 0.28;
+const baseMoveSpeed = 0.055;
+const friction      = 0.80;   // más fricción = más control
+
+function getMoveSpeed() { return activePowerups.speed.active ? baseMoveSpeed * 1.7 : baseMoveSpeed; }
+function getJumpForce() { return activePowerups.jump.active  ? baseJumpForce * 1.5 : baseJumpForce; }
+
+const TOTAL_LEVELS = 12;
+
+// ──────────────────────────────────────────────────────────────────
+//  INIT THREE.JS
+// ──────────────────────────────────────────────────────────────────
+function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.Fog(0x87ceeb, 15, 120);
+
+    camera = new THREE.PerspectiveCamera(70, innerWidth / innerHeight, 0.1, 500);
+
+    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas'), antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Luces
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(15, 30, 15);
+    sun.castShadow = true;
+    sun.shadow.camera.left = sun.shadow.camera.bottom = -80;
+    sun.shadow.camera.right = sun.shadow.camera.top = 80;
+    sun.shadow.mapSize.setScalar(2048);
+    scene.add(sun);
+
+    // Jugador
+    const geo = new THREE.BoxGeometry(1, 1, 1);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
+    player = new THREE.Mesh(geo, mat);
+    player.castShadow = true;
+    scene.add(player);
+
+    // Controles
+    window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; e.preventDefault(); });
+    window.addEventListener('keyup',   e => { keys[e.key.toLowerCase()] = false; });
+    window.addEventListener('resize',  onResize);
+    window.addEventListener('mousemove', e => {
+        mouseX = (e.clientX / innerWidth) * 2 - 1;
+    });
+
+    // Generar estrellas fondo
+    const sb = document.getElementById('starBg');
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;
+            animation-delay:${Math.random()*3}s; animation-duration:${2+Math.random()*3}s;
+            opacity:${0.2+Math.random()*0.5};`;
+        sb.appendChild(s);
+    }
+
+    buildLevelsGrid();
+    gameLoop();
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  LEVEL SELECT UI
+// ──────────────────────────────────────────────────────────────────
+const LEVEL_META = [
+    { icon:'🌿', name:'Pradera'    },
+    { icon:'⛰️', name:'Montañas'   },
+    { icon:'🌊', name:'Playa'      },
+    { icon:'🔥', name:'Volcán'     },
+    { icon:'🌙', name:'Noche'      },
+    { icon:'❄️', name:'Hielo'      },
+    { icon:'🌀', name:'Tormenta'   },
+    { icon:'🍄', name:'Bosque'     },
+    { icon:'🏜️', name:'Desierto'   },
+    { icon:'💎', name:'Cristal'    },
+    { icon:'🌌', name:'Espacio'    },
+    { icon:'👑', name:'Final'      },
+];
+
+function buildLevelsGrid() {
+    const grid = document.getElementById('levelsGrid');
+    grid.innerHTML = '';
+    for (let i = 1; i <= TOTAL_LEVELS; i++) {
+        const card = document.createElement('div');
+        const done = completedLevels.includes(i);
+        const unlocked = i <= unlockedLevel;
+        card.className = 'level-card ' + (done ? 'completed' : unlocked ? 'unlocked' : 'locked');
+
+        const meta = LEVEL_META[i-1];
+        const stars = done ? '★★★' : '';
+        card.innerHTML = `
+            <div class="lc-icon">${unlocked ? meta.icon : '🔒'}</div>
+            <div class="lc-num">${i}</div>
+            <div class="lc-stars">${stars}</div>
+        `;
+        if (unlocked) {
+            card.addEventListener('click', () => startLevel(i));
+        }
+        grid.appendChild(card);
+    }
+}
+
+function showStart() {
+    document.getElementById('startScreen').style.display = 'flex';
+    document.getElementById('levelSelect').style.display = 'none';
+}
+
+function showLevelSelect() {
+    buildLevelsGrid();
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('levelSelect').style.display = 'flex';
+}
+
+function backToMenu() {
+    gameActive = false;
+    document.getElementById('gameOver').style.display = 'none';
+    document.getElementById('levelClear').style.display = 'none';
+    showLevelSelect();
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  START / RESTART
+// ──────────────────────────────────────────────────────────────────
+function startLevel(lvl) {
+    currentLevel = lvl;
+    document.getElementById('levelSelect').style.display = 'none';
+    document.getElementById('gameOver').style.display = 'none';
+    document.getElementById('levelClear').style.display = 'none';
+
+    lives = 3;
+    coinsCollected = 0;
+    startTime = Date.now();
+    levelStartTime = Date.now();
+    elapsedTime = 0;
+
+    resetPowerups();
+    respawnPlayer();
+    createLevel(currentLevel);
+    updateUI();
+    updatePowerupUI();
+    gameActive = true;
+}
+
+function restartLevel() {
+    startLevel(currentLevel);
+}
+
+function proceedNextLevel() {
+    document.getElementById('levelClear').style.display = 'none';
+    if (currentLevel >= TOTAL_LEVELS) {
+        showVictory();
+    } else {
+        startLevel(currentLevel + 1);
+    }
+}
+
+function resetPowerups() {
+    for (let k in activePowerups) {
+        activePowerups[k].active = false;
+        activePowerups[k].endTime = 0;
+    }
+    if (player) {
+        player.material.emissive = new THREE.Color(0x000000);
+        player.material.emissiveIntensity = 0;
+    }
+}
+
+function respawnPlayer() {
+    player.position.set(0, 2, 0);
+    playerVelocity.set(0, 0, 0);
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  LEVEL BUILDER HELPERS
+// ──────────────────────────────────────────────────────────────────
+function clearLevel() {
+    [...platforms, ...coins, ...enemies, ...powerupObjects].forEach(o => scene.remove(o));
+    platforms = []; coins = []; enemies = []; powerupObjects = [];
+}
+
+function addPlatform(x, y, z, w, h, d, color = 0x3b82f6, moving = null) {
+    const geo = new THREE.BoxGeometry(w, h, d);
+    const mat = new THREE.MeshStandardMaterial({ color });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    m.receiveShadow = true; m.castShadow = true;
+    m.userData.isPlatform = true;
+    if (moving) {
+        m.userData.moving = true;
+        m.userData.axis  = moving.axis;
+        m.userData.range = moving.range;
+        m.userData.speed = moving.speed || 0.018;
+        m.userData.startPos = { x, y, z };
+        m.userData.offset = moving.phase || 0;
+    }
+    scene.add(m); platforms.push(m);
+    return m;
+}
+
+function addCoin(x, y, z) {
+    const geo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
+    const mat = new THREE.MeshStandardMaterial({
+        color: 0xfbbf24, emissive: 0xfbbf24,
+        emissiveIntensity: 0.5, metalness: 0.8, roughness: 0.2
+    });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    m.rotation.x = Math.PI / 2;
+    m.userData.isCoin = true; m.userData.rot = 0;
+    scene.add(m); coins.push(m);
+}
+
+function addPowerup(x, y, z, type) {
+    const colors = { speed: 0x00ffff, jump: 0x00ff44, shield: 0x4499ff, invincible: 0xff00ff };
+    const geo = new THREE.SphereGeometry(0.42, 16, 16);
+    const mat = new THREE.MeshStandardMaterial({
+        color: colors[type], emissive: colors[type],
+        emissiveIntensity: 0.7, metalness: 0.4, roughness: 0.3
+    });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    m.userData.isPowerup = true; m.userData.type = type;
+    m.userData.baseY = y; m.userData.rot = 0;
+    scene.add(m); powerupObjects.push(m);
+}
+
+function addEnemy(x, y, z) {
+    const geo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+    const mat = new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 0.3 });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z); m.castShadow = true;
+    m.userData.isEnemy = true; m.userData.rot = 0;
+    scene.add(m); enemies.push(m);
+}
+
+function addGoal(x, y, z) {
+    const geo = new THREE.CylinderGeometry(1, 1, 3, 16);
+    const mat = new THREE.MeshStandardMaterial({ color: 0x22c55e, emissive: 0x22c55e, emissiveIntensity: 0.5 });
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y + 1.5, z);
+    m.userData.isGoal = true; m.userData.isPlatform = true;
+    scene.add(m); platforms.push(m);
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  LEVELS  (1-12)
+// ──────────────────────────────────────────────────────────────────
+function createLevel(lvl) {
+    clearLevel();
+    respawnPlayer();
+
+    // Sky colours per level
+    const skies = [
+        0x87ceeb, 0x6ea8d0, 0x5fb8c0, 0xc07850, 0x1a1a3e,
+        0xaaddff, 0x334455, 0x1a3020, 0xe8c880, 0x88aabb,
+        0x0a0020, 0x200010
+    ];
+    const fogColors = [
+        0x87ceeb, 0x6ea8d0, 0x70c8c0, 0xd09060, 0x1a1a3e,
+        0xc0ddff, 0x223344, 0x1a3020, 0xe8c880, 0x88aabb,
+        0x0a0020, 0x200010
+    ];
+    scene.background = new THREE.Color(skies[lvl-1]);
+    scene.fog = new THREE.Fog(fogColors[lvl-1], 15, 120);
+
+    // Plataforma inicio
+    addPlatform(0, 0, 0, 5, 0.5, 5, 0x22c55e);
+
+    if (lvl === 1) {
+        // Tutorial: plataformas grandes, sin enemigos
+        addPlatform(6,  0.5, 0, 4, 0.5, 4, 0x3b82f6); addCoin(6, 2, 0);
+        addPlatform(12, 1,   0, 4, 0.5, 4, 0x3b82f6); addCoin(12, 2.5, 0); addPowerup(12,3,0,'speed');
+        addPlatform(18, 1.5, 0, 4, 0.5, 4, 0x3b82f6); addCoin(18, 3, 0);
+        addPlatform(24, 2,   0, 4, 0.5, 4, 0x3b82f6); addCoin(24, 3.5, 0);
+        addGoal(30, 2, 0);
+
+    } else if (lvl === 2) {
+        // Saltos con desvíos
+        addPlatform(6,  1,  2, 3.5, 0.5, 3.5, 0x3b82f6); addCoin(6,3,2);
+        addPlatform(11, 2, -2, 3.5, 0.5, 3.5, 0x8b5cf6); addCoin(11,4,-2); addPowerup(11,4.5,-2,'jump');
+        addPlatform(16, 2.5, 2, 3, 0.5, 3, 0x3b82f6); addCoin(16,4.5,2);
+        addPlatform(21, 3,   0, 3, 0.5, 3, 0x8b5cf6); addEnemy(21,4.3,0);
+        addPlatform(27, 3.5, 0, 4, 0.5, 4, 0x3b82f6); addCoin(27,5.5,0);
+        addGoal(33, 3.5, 0);
+
+    } else if (lvl === 3) {
+        // Primera plataforma móvil
+        addPlatform(6, 0.5, 0, 3, 0.5, 3, 0x3b82f6); addEnemy(6,2,0); addPowerup(6,2.5,0,'shield');
+        addPlatform(11, 2, 0, 3, 0.5, 3, {}, null, null); // override below
+        addPlatform(11, 2, 0, 3, 0.5, 3, 0xfbbf24, {axis:'x', range:3}); addCoin(11,4,0);
+        addPlatform(17, 3, 3, 3, 0.5, 3, 0x8b5cf6); addCoin(17,5,3);
+        addPlatform(22, 2.5, 0, 3, 0.5, 3, 0xfbbf24, {axis:'y', range:2}); addCoin(22,5,0); addEnemy(22,5.5,0);
+        addPlatform(28, 4, -2, 3, 0.5, 3, 0x3b82f6); addCoin(28,6,-2); addCoin(28,6,0);
+        addGoal(34, 4, -2);
+
+    } else if (lvl === 4) {
+        // Zigzag con enemigos
+        addPlatform(5,  1,  3, 3, 0.5, 3, 0x3b82f6); addCoin(5,3,3); addEnemy(5,2.5,3);
+        addPlatform(10, 2, -3, 3, 0.5, 3, 0x8b5cf6); addCoin(10,4,-3); addPowerup(10,4.5,-3,'invincible');
+        addPlatform(15, 3,  3, 3, 0.5, 3, 0x3b82f6); addEnemy(15,4.5,3);
+        addPlatform(20, 4, -3, 3, 0.5, 3, 0x8b5cf6); addCoin(20,6,-3); addEnemy(20,5.5,-3);
+        addPlatform(25, 3,  0, 3, 0.5, 3, 0xfbbf24, {axis:'z', range:3}); addCoin(25,5,0);
+        addPlatform(31, 5,  0, 4, 0.5, 4, 0x3b82f6);
+        addGoal(37, 5, 0);
+
+    } else if (lvl === 5) {
+        // Plataformas estrechas, más precisión
+        addPlatform(5,  1,  0, 2, 0.5, 2, 0x3b82f6); addCoin(5,3,0);
+        addPlatform(9,  2,  2, 2, 0.5, 2, 0x8b5cf6); addPowerup(9,3.5,2,'speed');
+        addPlatform(13, 3, -2, 2, 0.5, 2, 0x3b82f6); addCoin(13,5,-2);
+        addPlatform(17, 2,  0, 2, 0.5, 2, 0xfbbf24, {axis:'x', range:2.5}); addEnemy(17,3.5,0);
+        addPlatform(21, 4,  3, 2, 0.5, 2, 0x8b5cf6); addCoin(21,6,3);
+        addPlatform(25, 3.5,-3,2, 0.5, 2, 0xfbbf24, {axis:'y', range:2}); addPowerup(25,5.5,-3,'jump');
+        addPlatform(29, 5.5, 0, 2, 0.5, 2, 0x3b82f6); addCoin(29,7.5,0);
+        addPlatform(33, 6,   0, 3, 0.5, 3, 0x3b82f6);
+        addGoal(37, 6, 0);
+
+    } else if (lvl === 6) {
+        // Cascada vertical — subir mucho
+        addPlatform(4, 1, 0, 3, 0.5, 3, 0x3b82f6); addCoin(4,3,0);
+        addPlatform(8, 3, 4, 3, 0.5, 3, 0x8b5cf6); addEnemy(8,4.5,4); addPowerup(8,5,4,'shield');
+        addPlatform(12, 5, 0, 3, 0.5, 3, 0xfbbf24, {axis:'z', range:4}); addCoin(12,7,0);
+        addPlatform(16, 4,-4, 3, 0.5, 3, 0x8b5cf6); addEnemy(16,5.5,-4);
+        addPlatform(20, 7, 0, 3, 0.5, 3, 0xfbbf24, {axis:'x', range:3}); addCoin(20,9,0); addPowerup(20,9.5,0,'invincible');
+        addPlatform(24, 9, 4, 3, 0.5, 3, 0x3b82f6); addEnemy(24,10.5,4);
+        addPlatform(28, 10, 0, 4, 0.5, 4, 0x3b82f6); addCoin(28,12,0); addCoin(28,12,2);
+        addGoal(34, 10, 0);
+
+    } else if (lvl === 7) {
+        // Plataformas muy móviles
+        addPlatform(5, 1, 0, 3, 0.5, 3, 0x3b82f6); addPowerup(5,2.5,0,'speed');
+        addPlatform(9,  2, 3, 2.5, 0.5, 2.5, 0xfbbf24, {axis:'z', range:3}); addEnemy(9,3.5,3);
+        addPlatform(13, 3,-3, 2.5, 0.5, 2.5, 0xfbbf24, {axis:'x', range:3}); addCoin(13,5,-3);
+        addPlatform(17, 4, 0, 2, 0.5, 2, 0x8b5cf6); addPowerup(17,5.5,0,'jump');
+        addPlatform(21, 6, 4, 2.5, 0.5, 2.5, 0xfbbf24, {axis:'y', range:2.5}); addEnemy(21,8,4);
+        addPlatform(25, 5,-4, 2, 0.5, 2, 0x3b82f6); addCoin(25,7,-4);
+        addPlatform(29, 7, 0, 2.5, 0.5, 2.5, 0xfbbf24, {axis:'x', range:4}); addPowerup(29,9,0,'invincible');
+        addPlatform(33, 7, 3, 2, 0.5, 2, 0x8b5cf6); addEnemy(33,8.5,3);
+        addPlatform(37, 9,-2, 2.5, 0.5, 2.5, 0xfbbf24, {axis:'z', range:3}); addCoin(37,11,-2);
+        addPlatform(41,10, 0, 4, 0.5, 4, 0x3b82f6);
+        addGoal(47, 10, 0);
+
+    } else if (lvl === 8) {
+        // Doble salto (escudo da rebote)
+        addPlatform(5, 1, 0, 3, 0.5, 3, 0x22c55e); addPowerup(5,2.5,0,'jump');
+        addPlatform(9,  3, 2, 2.5,0.5,2.5, 0x3b82f6); addCoin(9,5,2);
+        addPlatform(13, 5,-2, 2.5,0.5,2.5, 0x8b5cf6); addEnemy(13,6.5,-2); addPowerup(13,7,-2,'shield');
+        addPlatform(17, 7, 0, 2,0.5,2, 0xfbbf24,{axis:'x',range:3}); addCoin(17,9,0);
+        addPlatform(21, 9, 3, 2,0.5,2, 0x3b82f6); addCoin(21,11,3);
+        addPlatform(25,11,-3, 2,0.5,2, 0xfbbf24,{axis:'y',range:2.5}); addPowerup(25,13,-3,'invincible');
+        addPlatform(29,10, 0, 2.5,0.5,2.5,0x8b5cf6); addEnemy(29,11.5,0);
+        addPlatform(33,12, 0, 2,0.5,2,0x3b82f6); addCoin(33,14,0);
+        addPlatform(37,13, 0, 4,0.5,4,0x22c55e);
+        addGoal(43,13,0);
+
+    } else if (lvl === 9) {
+        // Desierto: todo se mueve rápido
+        addPlatform(5, 1, 0, 3,0.5,3,0xe8c070); addPowerup(5,2.5,0,'speed');
+        addPlatform(9, 2, 0, 2.5,0.5,2.5, 0xe8a040, {axis:'x',range:3,speed:0.03}); addCoin(9,4,0);
+        addPlatform(13,3, 3, 2.5,0.5,2.5, 0xd09030, {axis:'z',range:3,speed:0.03}); addEnemy(13,4.5,3);
+        addPlatform(17,4,-3, 2,0.5,2, 0xe8c070, {axis:'y',range:2,speed:0.025}); addCoin(17,6,-3);
+        addPlatform(21,5, 0, 2,0.5,2, 0xe8a040, {axis:'x',range:4,speed:0.03}); addPowerup(21,7,0,'jump');
+        addPlatform(25,7, 3, 2,0.5,2, 0xd09030, {axis:'z',range:3,speed:0.035}); addEnemy(25,8.5,3);
+        addPlatform(29,8,-3, 2,0.5,2, 0xe8c070, {axis:'x',range:3,speed:0.03}); addCoin(29,10,-3);
+        addPlatform(33,9, 0, 3,0.5,3, 0xe8a040); addCoin(33,11,0); addCoin(33,11,2);
+        addGoal(39,9,0);
+
+    } else if (lvl === 10) {
+        // Cristal: plataformas muy pequeñas, más vidas en juego
+        addPlatform(5, 1, 0, 2,0.5,2, 0x88ccff); addCoin(5,3,0);
+        addPlatform(8, 2, 3, 1.8,0.5,1.8, 0xaaddff); addPowerup(8,3.5,3,'shield');
+        addPlatform(11,3,-3, 1.8,0.5,1.8, 0x88ccff); addEnemy(11,4.5,-3);
+        addPlatform(14,4, 0, 1.8,0.5,1.8, 0xbbddff, {axis:'x',range:2.5}); addCoin(14,6,0);
+        addPlatform(17,5, 3, 1.6,0.5,1.6, 0x88ccff); addCoin(17,7,3);
+        addPlatform(20,6,-3, 1.6,0.5,1.6, 0xaaddff, {axis:'z',range:2}); addPowerup(20,8,-3,'invincible');
+        addPlatform(23,7, 0, 1.6,0.5,1.6, 0xbbddff); addEnemy(23,8.5,0);
+        addPlatform(26,8, 3, 1.8,0.5,1.8, 0x88ccff); addCoin(26,10,3);
+        addPlatform(29,9,-3, 1.8,0.5,1.8, 0xaaddff, {axis:'y',range:2.5}); addCoin(29,11,-3);
+        addPlatform(32,10, 0, 3,0.5,3, 0x88ccff); addCoin(32,12,0);
+        addGoal(37,10,0);
+
+    } else if (lvl === 11) {
+        // Espacio: gravedad reducida (simulada con salto alto), todo se mueve
+        addPlatform(5, 1, 0, 2.5,0.5,2.5, 0x223355); addPowerup(5,2.5,0,'jump');
+        addPlatform(9, 4, 2, 2,0.5,2, 0x334466, {axis:'z',range:3,speed:0.025}); addCoin(9,6,2);
+        addPlatform(13,6,-2, 2,0.5,2, 0x445577, {axis:'x',range:4,speed:0.025}); addEnemy(13,7.5,-2);
+        addPlatform(17,8, 0, 2,0.5,2, 0x556688, {axis:'y',range:3,speed:0.02}); addCoin(17,10,0); addPowerup(17,10.5,0,'invincible');
+        addPlatform(21,10, 3, 1.8,0.5,1.8, 0x334466, {axis:'z',range:2.5}); addEnemy(21,11.5,3);
+        addPlatform(25,11,-3, 1.8,0.5,1.8, 0x445577, {axis:'x',range:3}); addCoin(25,13,-3);
+        addPlatform(29,13, 0, 2,0.5,2, 0x556688, {axis:'y',range:2}); addPowerup(29,15,0,'speed');
+        addPlatform(33,14, 2, 2,0.5,2, 0x334466); addEnemy(33,15.5,2);
+        addPlatform(37,15,-2, 2,0.5,2, 0x445577, {axis:'x',range:3}); addCoin(37,17,-2);
+        addPlatform(41,16, 0, 3,0.5,3, 0x223355);
+        addGoal(47,16,0);
+
+    } else if (lvl === 12) {
+        // Final: todo combinado, muy difícil
+        addPlatform(5, 1, 0, 2.5,0.5,2.5, 0x880020); addPowerup(5,2.5,0,'speed'); addPowerup(5.5,2.5,1,'jump');
+        addPlatform(9,  3, 3, 2,0.5,2, 0xaa0030, {axis:'z',range:3,speed:0.03}); addEnemy(9,4.5,3);
+        addPlatform(13, 5,-3, 2,0.5,2, 0xcc0040, {axis:'x',range:4,speed:0.03}); addCoin(13,7,-3); addEnemy(13,7.5,-3);
+        addPlatform(17, 7, 0, 1.8,0.5,1.8, 0x880020, {axis:'y',range:3,speed:0.028}); addPowerup(17,9,0,'shield');
+        addPlatform(21, 9, 4, 1.8,0.5,1.8, 0xaa0030, {axis:'z',range:3,speed:0.032}); addEnemy(21,10.5,4);
+        addPlatform(25,10,-4, 1.8,0.5,1.8, 0xcc0040); addCoin(25,12,-4);
+        addPlatform(29,12, 0, 1.8,0.5,1.8, 0x880020, {axis:'x',range:4,speed:0.035}); addPowerup(29,14,0,'invincible');
+        addPlatform(33,13, 3, 1.8,0.5,1.8, 0xaa0030, {axis:'y',range:2.5}); addEnemy(33,14.5,3); addEnemy(33,14.5,1);
+        addPlatform(37,14,-3, 2,0.5,2, 0xcc0040, {axis:'z',range:3,speed:0.03}); addCoin(37,16,-3);
+        addPlatform(41,15, 0, 2,0.5,2, 0x880020, {axis:'x',range:3}); addEnemy(41,16.5,0);
+        addPlatform(45,16, 0, 5,0.5,5, 0xcc2244);
+        addCoin(45,18,0); addCoin(45,18,2); addCoin(45,18,-2); addCoin(47,18,0);
+        addGoal(51,16,0);
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  PHYSICS
+// ──────────────────────────────────────────────────────────────────
+function updatePhysics() {
+    if (!gameActive) return;
+
+    playerVelocity.y += gravity;
+
+    const forward = new THREE.Vector3();
+    camera.getWorldDirection(forward);
+    forward.y = 0; forward.normalize();
+    const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0,1,0)).normalize();
+
+    const spd = getMoveSpeed();
+    if (keys['w'] || keys['arrowup'])    { playerVelocity.x += forward.x*spd; playerVelocity.z += forward.z*spd; }
+    if (keys['s'] || keys['arrowdown'])  { playerVelocity.x -= forward.x*spd; playerVelocity.z -= forward.z*spd; }
+    if (keys['a'] || keys['arrowleft'])  { playerVelocity.x -= right.x*spd;   playerVelocity.z -= right.z*spd; }
+    if (keys['d'] || keys['arrowright']) { playerVelocity.x += right.x*spd;   playerVelocity.z += right.z*spd; }
+
+    if ((keys[' '] || keys['arrowup']) && canJump && !isJumping) {
+        playerVelocity.y = getJumpForce();
+        isJumping = true; canJump = false;
+    }
+
+    playerVelocity.x *= friction;
+    playerVelocity.z *= friction;
+    player.position.add(playerVelocity);
+
+    // Collisions
+    canJump = false;
+    const pbox = new THREE.Box3().setFromObject(player);
+
+    for (const plat of platforms) {
+        const pla = new THREE.Box3().setFromObject(plat);
+        if (!pbox.intersectsBox(pla)) continue;
+
+        if (plat.userData.isGoal) { levelComplete(); return; }
+
+        if (playerVelocity.y < 0) {
+            player.position.y = plat.position.y + (plat.geometry.parameters.height || 3) / 2 + 0.5;
+            playerVelocity.y = 0;
+            isJumping = false; canJump = true;
+            if (plat.userData.moving && plat.userData.lastDelta) {
+                player.position.x += plat.userData.lastDelta.x;
+                player.position.y += plat.userData.lastDelta.y;
+                player.position.z += plat.userData.lastDelta.z;
+            }
+        }
+    }
+
+    // Coins
+    for (let i = coins.length - 1; i >= 0; i--) {
+        if (player.position.distanceTo(coins[i].position) < 1.1) {
+            scene.remove(coins[i]); coins.splice(i, 1);
+            coinsCollected++; levelCoins++;
+            updateUI();
+        }
+    }
+
+    // Power-ups
+    for (let i = powerupObjects.length - 1; i >= 0; i--) {
+        if (player.position.distanceTo(powerupObjects[i].position) < 1.1) {
+            activatePowerup(powerupObjects[i].userData.type);
+            scene.remove(powerupObjects[i]); powerupObjects.splice(i, 1);
+        }
+    }
+
+    // Enemies
+    for (const en of enemies) {
+        if (player.position.distanceTo(en.position) < 1.0) {
+            if (activePowerups.shield.active) {
+                activePowerups.shield.active = false;
+                updatePowerupUI();
+            } else if (!activePowerups.invincible.active) {
+                onHit();
+                return;
+            }
+        }
+    }
+
+    // Fall
+    if (player.position.y < -12) { onHit(); return; }
+
+    elapsedTime = Date.now() - startTime;
+    document.getElementById('time').textContent = Math.floor(elapsedTime / 1000);
+    updatePowerupUI();
+
+    // Camera
+    camera.position.x = player.position.x + mouseX * 6;
+    camera.position.y = player.position.y + 6;
+    camera.position.z = player.position.z + 12;
+    camera.lookAt(player.position);
+}
+
+function onHit() {
+    lives--;
+    updateUI();
+    if (lives <= 0) {
+        gameOver();
+    } else {
+        respawnPlayer();
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  POWER-UPS
+// ──────────────────────────────────────────────────────────────────
+const PU_ICONS  = { speed:'⚡', jump:'🦘', shield:'🛡️', invincible:'⭐' };
+const PU_NAMES  = { speed:'Velocidad', jump:'Super Salto', shield:'Escudo', invincible:'Invencible' };
+const PU_COLORS = { speed:0x00ffff, jump:0x00ff44, shield:0x4499ff, invincible:0xff00ff };
+
+function activatePowerup(type) {
+    activePowerups[type].active = true;
+    activePowerups[type].endTime = Date.now() + 9000;
+    player.material.emissive = new THREE.Color(PU_COLORS[type]);
+    player.material.emissiveIntensity = 0.55;
+    updatePowerupUI();
+}
+
+function updatePowerupUI() {
+    const container = document.getElementById('activePowerups');
+    container.innerHTML = '';
+    const now = Date.now();
+    let anyActive = false;
+
+    for (let type in activePowerups) {
+        if (!activePowerups[type].active) continue;
+        const rem = Math.ceil((activePowerups[type].endTime - now) / 1000);
+        if (rem <= 0) {
+            activePowerups[type].active = false;
+            continue;
+        }
+        anyActive = true;
+        const d = document.createElement('div');
+        d.className = 'powerup-active';
+        d.innerHTML = `<span>${PU_ICONS[type]} ${PU_NAMES[type]}</span><span class="powerup-timer">${rem}s</span>`;
+        container.appendChild(d);
+    }
+    if (!anyActive) {
+        player.material.emissive = new THREE.Color(0x000000);
+        player.material.emissiveIntensity = 0;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  LEVEL COMPLETE / GAME OVER / VICTORY
+// ──────────────────────────────────────────────────────────────────
+function levelComplete() {
+    gameActive = false;
+
+    // Save progress
+    if (!completedLevels.includes(currentLevel)) completedLevels.push(currentLevel);
+    if (currentLevel + 1 > unlockedLevel) unlockedLevel = currentLevel + 1;
+    if (unlockedLevel > TOTAL_LEVELS) unlockedLevel = TOTAL_LEVELS;
+    localStorage.setItem('unlocked', unlockedLevel);
+    localStorage.setItem('completed', JSON.stringify(completedLevels));
+
+    const levelTime = Math.floor((Date.now() - levelStartTime) / 1000);
+    document.getElementById('lcCoins').textContent = levelCoins;
+    document.getElementById('lcTime').textContent = levelTime;
+    document.getElementById('lcSubtitle').textContent = LEVEL_META[currentLevel-1].name + ' ' + LEVEL_META[currentLevel-1].icon;
+
+    const btn = document.getElementById('nextLevelBtn');
+    if (currentLevel >= TOTAL_LEVELS) {
+        btn.textContent = '🏆 ¡Fin del juego!';
+    } else {
+        btn.textContent = `Nivel ${currentLevel+1}: ${LEVEL_META[currentLevel].icon} ➜`;
+    }
+
+    document.getElementById('levelClear').style.display = 'flex';
+    levelCoins = 0;
+}
+
+function gameOver() {
+    gameActive = false;
+    document.getElementById('goBox').className = 'go-box';
+    document.getElementById('gameOverTitle').textContent = '💀 Game Over';
+    document.getElementById('gameOverText').textContent = 'Te quedaste sin vidas';
+    document.getElementById('finalCoins').textContent = coinsCollected;
+    document.getElementById('finalTime').textContent = Math.floor(elapsedTime / 1000);
+    document.getElementById('gameOver').style.display = 'flex';
+}
+
+function showVictory() {
+    gameActive = false;
+    document.getElementById('goBox').className = 'go-box victory';
+    document.getElementById('gameOverTitle').textContent = '🏆 ¡Completado!';
+    document.getElementById('gameOverText').textContent = '¡Has superado todos los niveles!';
+    document.getElementById('finalCoins').textContent = coinsCollected;
+    document.getElementById('finalTime').textContent = Math.floor(elapsedTime / 1000);
+    document.getElementById('gameOver').style.display = 'flex';
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  UI
+// ──────────────────────────────────────────────────────────────────
+function updateUI() {
+    document.getElementById('coins').textContent = coinsCollected;
+    document.getElementById('lives').textContent = lives;
+    document.getElementById('levelDisp').textContent = currentLevel;
+}
+
+// ──────────────────────────────────────────────────────────────────
+//  GAME LOOP
+// ──────────────────────────────────────────────────────────────────
+function gameLoop() {
+    requestAnimationFrame(gameLoop);
+
+    if (!gameActive) {
+        renderer.render(scene, camera);
+        return;
+    }
+
+    updatePhysics();
+
+    // Animar monedas
+    coins.forEach(c => { c.userData.rot += 0.05; c.rotation.z = c.userData.rot; });
+
+    // Animar power-ups (flotar)
+    powerupObjects.forEach(p => {
+        p.userData.rot += 0.03;
+        p.rotation.y = p.userData.rot;
+        p.position.y = p.userData.baseY + Math.sin(p.userData.rot * 2) * 0.12;
+    });
+
+    // Animar enemigos
+    enemies.forEach(e => { e.userData.rot += 0.02; e.rotation.y = e.userData.rot; });
+
+    // Mover plataformas
+    platforms.forEach(p => {
+        if (!p.userData.moving) return;
+        p.userData.offset += p.userData.speed;
+        const off = Math.sin(p.userData.offset) * p.userData.range;
+        const old = { x: p.position.x, y: p.position.y, z: p.position.z };
+        if (p.userData.axis === 'x') p.position.x = p.userData.startPos.x + off;
+        if (p.userData.axis === 'y') p.position.y = p.userData.startPos.y + off;
+        if (p.userData.axis === 'z') p.position.z = p.userData.startPos.z + off;
+        p.userData.lastDelta = {
+            x: p.position.x - old.x,
+            y: p.position.y - old.y,
+            z: p.position.z - old.z
         };
+    });
 
-        // Físicas (velocidad reducida)
-        const gravity = -0.02;
-        const baseJumpForce = 0.35;  // Reducido de 0.4
-        const baseMoveSpeed = 0.10;  // Reducido de 0.15
-        const friction = 0.88;       // Aumentado para más control
+    renderer.render(scene, camera);
+}
 
-        function getCurrentMoveSpeed() {
-            return activePowerups.speed.active ? baseMoveSpeed * 1.8 : baseMoveSpeed;
-        }
+function onResize() {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+}
 
-        function getCurrentJumpForce() {
-            return activePowerups.jump.active ? baseJumpForce * 1.5 : baseJumpForce;
-        }
-
-        // Inicializar
-        function init() {
-            // Escena
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87ceeb);
-            scene.fog = new THREE.Fog(0x87ceeb, 10, 100);
-
-            // Cámara
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 5, 10);
-
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gameCanvas'), antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-            // Luces
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(10, 20, 10);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.camera.left = -50;
-            directionalLight.shadow.camera.right = 50;
-            directionalLight.shadow.camera.top = 50;
-            directionalLight.shadow.camera.bottom = -50;
-            directionalLight.shadow.mapSize.width = 2048;
-            directionalLight.shadow.mapSize.height = 2048;
-            scene.add(directionalLight);
-
-            // Jugador
-            const playerGeometry = new THREE.BoxGeometry(1, 1, 1);
-            const playerMaterial = new THREE.MeshStandardMaterial({ color: 0x3b82f6 });
-            player = new THREE.Mesh(playerGeometry, playerMaterial);
-            player.position.set(0, 2, 0);
-            player.castShadow = true;
-            scene.add(player);
-
-            // Crear nivel
-            createLevel(currentLevel);
-
-            // Eventos
-            window.addEventListener('keydown', (e) => keys[e.key.toLowerCase()] = true);
-            window.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
-            window.addEventListener('resize', onWindowResize);
-
-            // Mouse para cámara
-            let mouseX = 0;
-            window.addEventListener('mousemove', (e) => {
-                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-            });
-
-            // Actualizar cámara con mouse
-            setInterval(() => {
-                if (gameActive && player) {
-                    camera.position.x = player.position.x + mouseX * 5;
-                    camera.position.y = player.position.y + 5;
-                    camera.position.z = player.position.z + 10;
-                    camera.lookAt(player.position);
-                }
-            }, 16);
-        }
-
-        function createLevel(level) {
-            // Limpiar nivel anterior
-            platforms.forEach(p => scene.remove(p));
-            coins.forEach(c => scene.remove(c));
-            enemies.forEach(e => scene.remove(e));
-            powerups.forEach(p => scene.remove(p));
-            platforms = [];
-            coins = [];
-            enemies = [];
-            powerups = [];
-
-            // Plataforma inicial
-            createPlatform(0, 0, 0, 4, 0.5, 4, 0x22c55e);
-
-            if (level === 1) {
-                // Nivel 1: Tutorial básico con power-up
-                createPlatform(5, 0, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(5, 2, 0);
-                
-                createPlatform(10, 1, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(10, 3, 0);
-                createPowerup(10, 3.5, 0, 'speed');
-                
-                createPlatform(15, 0.5, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(15, 2.5, 0);
-                
-                createPlatform(20, 2, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(20, 4, 0);
-                
-                createGoal(25, 2, 0);
-            } else if (level === 2) {
-                // Nivel 2: Saltos con super salto
-                createPlatform(6, 1, 0, 3, 0.5, 3, 0x3b82f6);
-                createCoin(6, 3, 0);
-                
-                createPlatform(11, 2, 2, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(11, 4, 2);
-                createPowerup(11, 4.5, 2, 'jump');
-                
-                createPlatform(16, 4, -2, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(16, 6, -2);
-                
-                createPlatform(21, 3, 0, 3, 0.5, 3, 0x3b82f6);
-                createEnemy(21, 4, 0);
-                
-                createPlatform(26, 5, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(26, 7, 0);
-                
-                createGoal(31, 5, 0);
-            } else if (level === 3) {
-                // Nivel 3: Plataformas móviles y escudo
-                createPlatform(5, 0, 0, 3, 0.5, 3, 0x3b82f6);
-                createEnemy(5, 1.5, 0);
-                createPowerup(5, 2, 0, 'shield');
-                
-                createMovingPlatform(10, 2, 0, 3, 0.5, 3, 0xfbbf24, 'x', 3);
-                createCoin(10, 4, 0);
-                
-                createPlatform(15, 3, 3, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(15, 5, 3);
-                
-                createMovingPlatform(20, 2, 0, 3, 0.5, 3, 0xfbbf24, 'y', 2);
-                createCoin(20, 4, 0);
-                createEnemy(20, 5, 0);
-                
-                createPlatform(25, 4, -3, 3, 0.5, 3, 0x8b5cf6);
-                createEnemy(25, 5.5, -3);
-                
-                createPlatform(30, 5, 0, 4, 0.5, 4, 0x3b82f6);
-                createCoin(30, 7, 0);
-                createCoin(30, 7, 2);
-                createCoin(30, 7, -2);
-                
-                createGoal(36, 5, 0);
-            } else if (level === 4) {
-                // Nivel 4: Zigzag con enemigos
-                createPlatform(5, 1, 3, 3, 0.5, 3, 0x3b82f6);
-                createCoin(5, 3, 3);
-                createEnemy(5, 2.5, 3);
-                
-                createPlatform(10, 2, -3, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(10, 4, -3);
-                createPowerup(10, 4.5, -3, 'invincible');
-                
-                createPlatform(15, 3, 3, 3, 0.5, 3, 0x3b82f6);
-                createEnemy(15, 4.5, 3);
-                
-                createPlatform(20, 4, -3, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(20, 6, -3);
-                createEnemy(20, 5.5, -3);
-                
-                createMovingPlatform(25, 3, 0, 3, 0.5, 3, 0xfbbf24, 'z', 3);
-                createCoin(25, 5, 0);
-                
-                createPlatform(30, 5, 0, 4, 0.5, 4, 0x3b82f6);
-                createGoal(35, 5, 0);
-            } else if (level === 5) {
-                // Nivel 5: Plataformas estrechas
-                createPlatform(4, 1, 0, 2, 0.5, 2, 0x3b82f6);
-                createCoin(4, 3, 0);
-                
-                createPlatform(8, 2, 2, 2, 0.5, 2, 0x8b5cf6);
-                createPowerup(8, 3.5, 2, 'speed');
-                
-                createPlatform(12, 3, -2, 2, 0.5, 2, 0x3b82f6);
-                createCoin(12, 5, -2);
-                
-                createMovingPlatform(16, 2, 0, 2, 0.5, 2, 0xfbbf24, 'x', 2);
-                createEnemy(16, 3.5, 0);
-                
-                createPlatform(20, 4, 3, 2, 0.5, 2, 0x8b5cf6);
-                createCoin(20, 6, 3);
-                
-                createMovingPlatform(24, 3, -3, 2, 0.5, 2, 0xfbbf24, 'y', 2);
-                createPowerup(24, 5, -3, 'jump');
-                
-                createPlatform(28, 5, 0, 2, 0.5, 2, 0x3b82f6);
-                createCoin(28, 7, 0);
-                
-                createPlatform(32, 6, 0, 3, 0.5, 3, 0x3b82f6);
-                createGoal(36, 6, 0);
-            } else if (level === 6) {
-                // Nivel 6: Laberinto vertical
-                createPlatform(5, 1, 0, 3, 0.5, 3, 0x3b82f6);
-                createCoin(5, 3, 0);
-                
-                createPlatform(9, 2, 4, 3, 0.5, 3, 0x8b5cf6);
-                createEnemy(9, 3.5, 4);
-                createPowerup(9, 4, 4, 'shield');
-                
-                createMovingPlatform(13, 4, 0, 3, 0.5, 3, 0xfbbf24, 'z', 4);
-                createCoin(13, 6, 0);
-                
-                createPlatform(17, 3, -4, 3, 0.5, 3, 0x8b5cf6);
-                createEnemy(17, 4.5, -4);
-                
-                createMovingPlatform(21, 5, 0, 3, 0.5, 3, 0xfbbf24, 'x', 3);
-                createCoin(21, 7, 0);
-                createPowerup(21, 7.5, 0, 'invincible');
-                
-                createPlatform(25, 6, 4, 3, 0.5, 3, 0x3b82f6);
-                createEnemy(25, 7.5, 4);
-                
-                createPlatform(29, 7, 0, 3, 0.5, 3, 0x8b5cf6);
-                createCoin(29, 9, 0);
-                
-                createPlatform(33, 8, -3, 4, 0.5, 4, 0x3b82f6);
-                createCoin(33, 10, -3);
-                createCoin(33, 10, -1);
-                
-                createGoal(38, 8, -3);
-            } else if (level === 7) {
-                // Nivel 7: Final épico
-                createPlatform(5, 1, 0, 3, 0.5, 3, 0x3b82f6);
-                createPowerup(5, 2.5, 0, 'speed');
-                
-                createMovingPlatform(9, 2, 3, 2.5, 0.5, 2.5, 0xfbbf24, 'z', 3);
-                createEnemy(9, 3.5, 3);
-                
-                createMovingPlatform(13, 3, -3, 2.5, 0.5, 2.5, 0xfbbf24, 'x', 3);
-                createCoin(13, 5, -3);
-                
-                createPlatform(17, 4, 0, 2, 0.5, 2, 0x8b5cf6);
-                createPowerup(17, 5.5, 0, 'jump');
-                
-                createMovingPlatform(21, 6, 4, 2.5, 0.5, 2.5, 0xfbbf24, 'y', 2);
-                createEnemy(21, 8, 4);
-                
-                createPlatform(25, 5, -4, 2, 0.5, 2, 0x3b82f6);
-                createCoin(25, 7, -4);
-                
-                createMovingPlatform(29, 7, 0, 2.5, 0.5, 2.5, 0xfbbf24, 'x', 4);
-                createPowerup(29, 9, 0, 'invincible');
-                
-                createPlatform(33, 6, 3, 2, 0.5, 2, 0x8b5cf6);
-                createEnemy(33, 7.5, 3);
-                
-                createMovingPlatform(37, 8, -2, 2.5, 0.5, 2.5, 0xfbbf24, 'z', 3);
-                createCoin(37, 10, -2);
-                
-                createPlatform(41, 9, 0, 3, 0.5, 3, 0x3b82f6);
-                createEnemy(41, 10.5, 0);
-                
-                createPlatform(45, 10, 0, 5, 0.5, 5, 0x22c55e);
-                createCoin(45, 12, 0);
-                createCoin(45, 12, 2);
-                createCoin(45, 12, -2);
-                createCoin(47, 12, 0);
-                
-                createGoal(50, 10, 0);
-            }
-        }
-
-        function createPlatform(x, y, z, width, height, depth, color) {
-            const geometry = new THREE.BoxGeometry(width, height, depth);
-            const material = new THREE.MeshStandardMaterial({ color: color });
-            const platform = new THREE.Mesh(geometry, material);
-            platform.position.set(x, y, z);
-            platform.receiveShadow = true;
-            platform.castShadow = true;
-            platform.userData.isPlatform = true;
-            scene.add(platform);
-            platforms.push(platform);
-            return platform;
-        }
-
-        function createMovingPlatform(x, y, z, width, height, depth, color, axis, range) {
-            const platform = createPlatform(x, y, z, width, height, depth, color);
-            platform.userData.moving = true;
-            platform.userData.axis = axis;
-            platform.userData.range = range;
-            platform.userData.startPos = { x, y, z };
-            platform.userData.offset = 0;
-            platform.userData.speed = 0.02;
-            return platform;
-        }
-
-        function createCoin(x, y, z) {
-            const geometry = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: 0xfbbf24,
-                emissive: 0xfbbf24,
-                emissiveIntensity: 0.5,
-                metalness: 0.8,
-                roughness: 0.2
-            });
-            const coin = new THREE.Mesh(geometry, material);
-            coin.position.set(x, y, z);
-            coin.rotation.x = Math.PI / 2;
-            coin.userData.isCoin = true;
-            coin.userData.rotation = 0;
-            scene.add(coin);
-            coins.push(coin);
-        }
-
-        function createPowerup(x, y, z, type) {
-            const geometry = new THREE.SphereGeometry(0.4, 16, 16);
-            let color, icon;
-            
-            switch(type) {
-                case 'speed':
-                    color = 0x00ffff; // Cyan
-                    icon = '⚡';
-                    break;
-                case 'jump':
-                    color = 0x00ff00; // Verde
-                    icon = '🦘';
-                    break;
-                case 'shield':
-                    color = 0x0080ff; // Azul
-                    icon = '🛡️';
-                    break;
-                case 'invincible':
-                    color = 0xff00ff; // Magenta
-                    icon = '⭐';
-                    break;
-            }
-            
-            const material = new THREE.MeshStandardMaterial({ 
-                color: color,
-                emissive: color,
-                emissiveIntensity: 0.7,
-                metalness: 0.5,
-                roughness: 0.3
-            });
-            const powerup = new THREE.Mesh(geometry, material);
-            powerup.position.set(x, y, z);
-            powerup.userData.isPowerup = true;
-            powerup.userData.type = type;
-            powerup.userData.icon = icon;
-            powerup.userData.rotation = 0;
-            scene.add(powerup);
-            powerups.push(powerup);
-        }
-
-        function activatePowerup(type) {
-            const duration = 8000; // 8 segundos
-            const now = Date.now();
-            
-            activePowerups[type].active = true;
-            activePowerups[type].endTime = now + duration;
-            
-            // Efecto visual en el jugador
-            if (type === 'speed') {
-                player.material.emissive = new THREE.Color(0x00ffff);
-                player.material.emissiveIntensity = 0.5;
-            } else if (type === 'jump') {
-                player.material.emissive = new THREE.Color(0x00ff00);
-                player.material.emissiveIntensity = 0.5;
-            } else if (type === 'shield') {
-                player.material.emissive = new THREE.Color(0x0080ff);
-                player.material.emissiveIntensity = 0.5;
-            } else if (type === 'invincible') {
-                player.material.emissive = new THREE.Color(0xff00ff);
-                player.material.emissiveIntensity = 0.8;
-            }
-            
-            updatePowerupUI();
-        }
-
-        function updatePowerupUI() {
-            const container = document.getElementById('activePowerups');
-            container.innerHTML = '';
-            
-            const now = Date.now();
-            let hasActive = false;
-            
-            for (let type in activePowerups) {
-                if (activePowerups[type].active) {
-                    const remaining = Math.ceil((activePowerups[type].endTime - now) / 1000);
-                    if (remaining > 0) {
-                        hasActive = true;
-                        const icons = { speed: '⚡', jump: '🦘', shield: '🛡️', invincible: '⭐' };
-                        const names = { speed: 'Velocidad', jump: 'Super Salto', shield: 'Escudo', invincible: 'Invencible' };
-                        
-                        const div = document.createElement('div');
-                        div.className = 'powerup-active';
-                        div.innerHTML = `
-                            <span>${icons[type]} ${names[type]}</span>
-                            <span class="powerup-timer">${remaining}s</span>
-                        `;
-                        container.appendChild(div);
-                    } else {
-                        activePowerups[type].active = false;
-                        // Restaurar color del jugador si no hay otros powerups
-                        if (!hasActivePowerup()) {
-                            player.material.emissive = new THREE.Color(0x000000);
-                            player.material.emissiveIntensity = 0;
-                        }
-                    }
-                }
-            }
-        }
-
-        function hasActivePowerup() {
-            for (let type in activePowerups) {
-                if (activePowerups[type].active) return true;
-            }
-            return false;
-        }
-
-        function createEnemy(x, y, z) {
-            const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: 0xef4444,
-                emissive: 0xef4444,
-                emissiveIntensity: 0.3
-            });
-            const enemy = new THREE.Mesh(geometry, material);
-            enemy.position.set(x, y, z);
-            enemy.castShadow = true;
-            enemy.userData.isEnemy = true;
-            enemy.userData.rotation = 0;
-            scene.add(enemy);
-            enemies.push(enemy);
-        }
-
-        function createGoal(x, y, z) {
-            const geometry = new THREE.CylinderGeometry(1, 1, 3, 16);
-            const material = new THREE.MeshStandardMaterial({ 
-                color: 0x22c55e,
-                emissive: 0x22c55e,
-                emissiveIntensity: 0.5
-            });
-            const goal = new THREE.Mesh(geometry, material);
-            goal.position.set(x, y + 1.5, z);
-            goal.userData.isGoal = true;
-            scene.add(goal);
-            platforms.push(goal);
-        }
-
-        function startGame() {
-            document.getElementById('startScreen').style.display = 'none';
-            gameActive = true;
-            startTime = Date.now();
-            lives = 3;
-            coinsCollected = 0;
-            currentLevel = 1;
-            player.position.set(0, 2, 0);
-            playerVelocity.set(0, 0, 0);
-            
-            // Resetear power-ups
-            for (let type in activePowerups) {
-                activePowerups[type].active = false;
-                activePowerups[type].endTime = 0;
-            }
-            player.material.emissive = new THREE.Color(0x000000);
-            player.material.emissiveIntensity = 0;
-            
-            createLevel(1);
-            updateUI();
-            updatePowerupUI();
-            animate();
-        }
-
-        function restartGame() {
-            document.getElementById('gameOver').style.display = 'none';
-            gameActive = true;
-            startTime = Date.now();
-            lives = 3;
-            coinsCollected = 0;
-            currentLevel = 1;
-            player.position.set(0, 2, 0);
-            playerVelocity.set(0, 0, 0);
-            
-            // Resetear power-ups
-            for (let type in activePowerups) {
-                activePowerups[type].active = false;
-                activePowerups[type].endTime = 0;
-            }
-            player.material.emissive = new THREE.Color(0x000000);
-            player.material.emissiveIntensity = 0;
-            
-            createLevel(1);
-            updateUI();
-            updatePowerupUI();
-        }
-
-        function nextLevel() {
-            currentLevel++;
-            if (currentLevel > 7) {
-                endGame(true);
-            } else {
-                player.position.set(0, 2, 0);
-                playerVelocity.set(0, 0, 0);
-                createLevel(currentLevel);
-                updateUI();
-            }
-        }
-
-        function endGame(won = false) {
-            gameActive = false;
-            document.getElementById('gameOver').style.display = 'block';
-            document.getElementById('gameOverTitle').textContent = won ? '🎉 ¡Victoria!' : '💀 Game Over';
-            document.getElementById('gameOverText').textContent = won ? 
-                '¡Has completado todos los niveles!' : 
-                'Te quedaste sin vidas';
-            document.getElementById('finalCoins').textContent = coinsCollected;
-            document.getElementById('finalTime').textContent = Math.floor(elapsedTime / 1000);
-        }
-
-        function updatePhysics() {
-            if (!gameActive) return;
-
-            // Gravedad
-            playerVelocity.y += gravity;
-
-            // Movimiento horizontal con velocidad ajustada
-            const forward = new THREE.Vector3();
-            const right = new THREE.Vector3();
-            camera.getWorldDirection(forward);
-            forward.y = 0;
-            forward.normalize();
-            right.crossVectors(forward, new THREE.Vector3(0, 1, 0)).normalize();
-
-            const currentSpeed = getCurrentMoveSpeed();
-
-            if (keys['w']) {
-                playerVelocity.x += forward.x * currentSpeed;
-                playerVelocity.z += forward.z * currentSpeed;
-            }
-            if (keys['s']) {
-                playerVelocity.x -= forward.x * currentSpeed;
-                playerVelocity.z -= forward.z * currentSpeed;
-            }
-            if (keys['a']) {
-                playerVelocity.x -= right.x * currentSpeed;
-                playerVelocity.z -= right.z * currentSpeed;
-            }
-            if (keys['d']) {
-                playerVelocity.x += right.x * currentSpeed;
-                playerVelocity.z += right.z * currentSpeed;
-            }
-
-            // Salto con fuerza ajustada
-            if (keys[' '] && canJump && !isJumping) {
-                playerVelocity.y = getCurrentJumpForce();
-                isJumping = true;
-                canJump = false;
-            }
-
-            // Fricción
-            playerVelocity.x *= friction;
-            playerVelocity.z *= friction;
-
-            // Aplicar velocidad
-            player.position.add(playerVelocity);
-
-            // Colisiones con plataformas
-            canJump = false;
-            platforms.forEach(platform => {
-                if (checkCollision(player, platform)) {
-                    // Colisión desde arriba
-                    if (playerVelocity.y < 0) {
-                        player.position.y = platform.position.y + platform.geometry.parameters.height / 2 + 0.5;
-                        playerVelocity.y = 0;
-                        isJumping = false;
-                        canJump = true;
-
-                        // Si es plataforma móvil, mover al jugador con ella
-                        if (platform.userData.moving) {
-                            const delta = platform.userData.lastDelta || { x: 0, y: 0, z: 0 };
-                            player.position.x += delta.x;
-                            player.position.y += delta.y;
-                            player.position.z += delta.z;
-                        }
-                    }
-
-                    // Meta
-                    if (platform.userData.isGoal) {
-                        nextLevel();
-                    }
-                }
-            });
-
-            // Colisión con monedas
-            coins.forEach((coin, index) => {
-                const distance = player.position.distanceTo(coin.position);
-                if (distance < 1) {
-                    scene.remove(coin);
-                    coins.splice(index, 1);
-                    coinsCollected++;
-                    updateUI();
-                }
-            });
-
-            // Colisión con power-ups
-            powerups.forEach((powerup, index) => {
-                const distance = player.position.distanceTo(powerup.position);
-                if (distance < 1) {
-                    scene.remove(powerup);
-                    powerups.splice(index, 1);
-                    activatePowerup(powerup.userData.type);
-                }
-            });
-
-            // Colisión con enemigos
-            enemies.forEach(enemy => {
-                const distance = player.position.distanceTo(enemy.position);
-                if (distance < 1) {
-                    // Protección con shield o invincible
-                    if (activePowerups.shield.active) {
-                        // Desactivar escudo pero no perder vida
-                        activePowerups.shield.active = false;
-                        updatePowerupUI();
-                    } else if (!activePowerups.invincible.active) {
-                        respawn();
-                    }
-                }
-            });
-
-            // Caída
-            if (player.position.y < -10) {
-                respawn();
-            }
-
-            // Actualizar tiempo
-            elapsedTime = Date.now() - startTime;
-            document.getElementById('time').textContent = Math.floor(elapsedTime / 1000);
-            
-            // Actualizar UI de power-ups
-            updatePowerupUI();
-        }
-
-        function checkCollision(obj1, obj2) {
-            const box1 = new THREE.Box3().setFromObject(obj1);
-            const box2 = new THREE.Box3().setFromObject(obj2);
-            return box1.intersectsBox(box2);
-        }
-
-        function respawn() {
-            lives--;
-            updateUI();
-            if (lives <= 0) {
-                endGame(false);
-            } else {
-                player.position.set(0, 2, 0);
-                playerVelocity.set(0, 0, 0);
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('coins').textContent = coinsCollected;
-            document.getElementById('lives').textContent = lives;
-            document.getElementById('level').textContent = currentLevel;
-        }
-
-        function animate() {
-            if (!gameActive) return;
-            requestAnimationFrame(animate);
-
-            updatePhysics();
-
-            // Animar monedas
-            coins.forEach(coin => {
-                coin.userData.rotation += 0.05;
-                coin.rotation.z = coin.userData.rotation;
-            });
-
-            // Animar power-ups
-            powerups.forEach(powerup => {
-                powerup.userData.rotation += 0.03;
-                powerup.rotation.y = powerup.userData.rotation;
-                powerup.position.y += Math.sin(powerup.userData.rotation * 2) * 0.01;
-            });
-
-            // Animar enemigos
-            enemies.forEach(enemy => {
-                enemy.userData.rotation += 0.02;
-                enemy.rotation.y = enemy.userData.rotation;
-            });
-
-            // Mover plataformas móviles
-            platforms.forEach(platform => {
-                if (platform.userData.moving) {
-                    platform.userData.offset += platform.userData.speed;
-                    const offset = Math.sin(platform.userData.offset) * platform.userData.range;
-                    
-                    const oldPos = { x: platform.position.x, y: platform.position.y, z: platform.position.z };
-                    
-                    if (platform.userData.axis === 'x') {
-                        platform.position.x = platform.userData.startPos.x + offset;
-                    } else if (platform.userData.axis === 'y') {
-                        platform.position.y = platform.userData.startPos.y + offset;
-                    } else if (platform.userData.axis === 'z') {
-                        platform.position.z = platform.userData.startPos.z + offset;
-                    }
-                    
-                    platform.userData.lastDelta = {
-                        x: platform.position.x - oldPos.x,
-                        y: platform.position.y - oldPos.y,
-                        z: platform.position.z - oldPos.z
-                    };
-                }
-            });
-
-            renderer.render(scene, camera);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        init();
-    </script>
+init();
+</script>
 </body>
 </html>
